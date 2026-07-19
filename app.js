@@ -15,5 +15,13 @@ app.get('/dog', (req, res) => {
   res.send('woof');
 });
 
+app.get('/hello', (req, res) => {
+  res.send(`
+    <h1>Hi there!</h1>
+    <p>Welcome to my Express site.</p>
+    <p>Today is a good day to learn backend.</p>
+  `);
+});
+
 // Export the app
 module.exports = app; 
