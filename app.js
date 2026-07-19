@@ -1,6 +1,12 @@
 // Load the express package
 const express = require('express');
 
+// fs (short for "file system")
+const fs = require('fs'); 
+
+// role of marked is to convert markdown to html
+const { marked } = require('marked'); 
+
 // Create an instance of an Express application
 const app = express();
 
@@ -15,12 +21,20 @@ app.get('/dog', (req, res) => {
   res.send('woof');
 });
 
+// html
 app.get('/hello', (req, res) => {
   res.send(`
     <h1>Hi there!</h1>
     <p>Welcome to my Express site.</p>
     <p>Today is a good day to learn backend.</p>
   `);
+});
+
+// article
+app.get('/test', (req, res) => {
+  const contents = fs.readFileSync('articles/test.md', 'utf8');
+  const html = marked(contents);    // ← convert Markdown → HTML
+  res.send(html);                  // ← send the HTML version
 });
 
 // Export the app
