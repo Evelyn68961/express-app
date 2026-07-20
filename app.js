@@ -37,5 +37,26 @@ app.get('/test', (req, res) => {
   res.send(html);                  // ← send the HTML version
 });
 
+// multiple articles (v1)
+app.get('/articles/:articleName', (req, res) => {
+  const articleName = req.params.articleName;
+  const contents = fs.readFileSync(`articles/${articleName}.md`, 'utf8');
+  const html = marked(contents);
+  res.send(html);
+});
+
+// multiple articles (v2)
+app.get('/articles/:articleName', (req, res) => {
+  const { articleName } = req.params;   // ← pull `articleName` out of `req.params`
+  const contents = fs.readFileSync(`articles/${articleName}.md`, 'utf8');
+  const html = marked(contents);
+  res.send(html);
+});
+
+app.get('/articles/:articleName', (req, res) => {
+  console.log(req);   // ← peek inside
+  // ... rest of your code
+});
+
 // Export the app
 module.exports = app; 
