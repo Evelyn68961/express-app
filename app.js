@@ -37,25 +37,21 @@ app.get('/test', (req, res) => {
   res.send(html);                  // ← send the HTML version
 });
 
-// multiple articles (v1)
+// multiple articles (with error handling)
 app.get('/articles/:articleName', (req, res) => {
-  const articleName = req.params.articleName;
-  const contents = fs.readFileSync(`articles/${articleName}.md`, 'utf8');
-  const html = marked(contents);
-  res.send(html);
-});
+  const { articleName } = req.params;
 
-// multiple articles (v2)
-app.get('/articles/:articleName', (req, res) => {
-  const { articleName } = req.params;   // ← pull `articleName` out of `req.params`
-  const contents = fs.readFileSync(`articles/${articleName}.md`, 'utf8');
-  const html = marked(contents);
-  res.send(html);
-});
-
-app.get('/articles/:articleName', (req, res) => {
-  console.log(req);   // ← peek inside
-  // ... rest of your code
+  try {
+    const contents = fs.readFileSync(`articles/${articleName}.md`, 'utf8');
+    const html = marked(contents);
+    res.send(html);
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      res.status(404).send('Article not found');
+    } else {
+      res.status(500).send('Something went wrong');
+    }
+  }
 });
 
 // Export the app
