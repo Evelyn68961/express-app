@@ -10,6 +10,9 @@ const { marked } = require('marked');
 // Create an instance of an Express application
 const app = express();
 
+// Set the view engine to EJS
+app.set('view engine', 'ejs'); 
+
 // Define a port
 const PORT = 3000;
 
@@ -37,14 +40,18 @@ app.get('/test', (req, res) => {
   res.send(html);                  // ← send the HTML version
 });
 
-// multiple articles (with error handling)
+// multiple articles (with error handling + template rendering)
 app.get('/articles/:articleName', (req, res) => {
   const { articleName } = req.params;
 
   try {
     const contents = fs.readFileSync(`articles/${articleName}.md`, 'utf8');
     const html = marked(contents);
-    res.send(html);
+    const title = articleName.charAt(0).toUpperCase() + articleName.slice(1);
+    res.render('article', {
+      title: articleName,
+      body: html
+    });
   } catch (err) {
     if (err.code === 'ENOENT') {
       res.status(404).send('Article not found');
