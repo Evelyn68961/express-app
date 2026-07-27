@@ -2,7 +2,7 @@
 
 A living document tracking Evelyn's Express learning journey — what's done, what's next, and why the order was chosen.
 
-**Last updated:** July 26, 2026 (after Part 5 — EJS templates)
+**Last updated:** July 26, 2026 (after Part 6 — CSS + `express.static`)
 
 ---
 
@@ -25,36 +25,23 @@ A living document tracking Evelyn's Express learning journey — what's done, wh
 | 3 | Route parameters (`req.params`, `:slug`) | `express-notes03.md` | ✅ Complete |
 | 4 | Error handling (`try`/`catch`, HTTP status codes) | `express-notes04.md` | ✅ Complete |
 | 5 | EJS templates (`res.render`, `<%= %>`, `<%- %>`) | `express-notes05.md` | ✅ Complete |
+| 6 | `express.static` + CSS | `express-notes06.md` | ✅ Complete |
 
 **Current state of the app:**
 - `/articles/:articleName` reads any `.md` file, converts to HTML via `marked`, wraps in EJS shell
-- Renders proper `<!DOCTYPE html>` page with header, nav, footer
+- Static files served from `public/` via `express.static('public')`
+- Hand-written CSS for typography, layout, header/nav, footer, links
+- Semantic HTML — one `<h1>` per page, proper header/main/footer structure
 - Handles 404 (missing article) and 500 (other errors) correctly
-- No CSS yet — pages are unstyled but structurally sound
+- Looks like a real article page — centered column, readable typography, subtle header divider
 
 ---
 
 ## Upcoming topics (in order)
 
-### 6. `express.static` + CSS
-
-**Why here:** Pages have proper structure but no visual style. CSS is the biggest visible payoff for the least conceptual work. Also the foundation for **all** static assets — CSS, images, JS, fonts, PDFs.
-
-**What we'll cover:**
-- Why Express doesn't serve `/style.css` by default (routes are explicit)
-- The `express.static` middleware — the *"serve everything in this folder as-is"* switch
-- Folder conventions (`public/` at root)
-- Wiring `<link rel="stylesheet" href="/style.css">` in the EJS template
-- Writing basic CSS: readable typography, article max-width, header/nav styling
-- Mobile-friendly defaults
-
-**Note file:** `express-notes06.md`
-
----
-
 ### 7. Images in articles
 
-**Why here:** Uses the same `express.static` mechanism as CSS — natural extension. Once static serving works, images are almost free.
+**Why next:** Uses the same `express.static` mechanism as CSS — natural extension. Once static serving works, images are almost free.
 
 **What we'll cover:**
 - Markdown image syntax: `![alt text](/images/foo.png)`
@@ -62,6 +49,7 @@ A living document tracking Evelyn's Express learning journey — what's done, wh
 - Absolute vs relative paths (absolute is safer with Express)
 - Alt text — accessibility for clinical diagrams (esp. important for the domain)
 - Sizing options: HTML `<img width="...">` vs CSS classes vs `marked` extensions
+- Making images respect the article's max-width so they don't overflow
 - Format choice: PNG/JPG for photos and screenshots, SVG for diagrams and ECG traces
 - When inline React SVG components would be a better fit (spoiler: not for Markdown Express sites)
 
@@ -104,7 +92,7 @@ A living document tracking Evelyn's Express learning journey — what's done, wh
 
 ### 10. Jest tests
 
-**Why last:** Testing pays off when the app is stable. Writing tests too early means rewriting them every session. After steps 6–8, there's a real interface to test (index page, article page, 404, 500).
+**Why last:** Testing pays off when the app is stable. Writing tests too early means rewriting them every session. After steps 7–8, there's a real interface to test (index page, article page, 404, 500).
 
 **What we'll cover:**
 - Refresher on the `supertest` + `jest` setup from Part 1
@@ -125,7 +113,7 @@ These are important but not right now. Listed so they're not forgotten.
 | Topic | Why deferred | When to revisit |
 | --- | --- | --- |
 | **Async `fs.readFile` and Promises** | `readFileSync` is fine for learning. Async makes error handling more complex. | After Jest tests are comfortable |
-| **Middleware fundamentals** | Currently we've used middleware implicitly (`express.static`, EJS). Understanding the `(req, res, next)` pattern deserves a dedicated lesson. | Before adding auth or logging |
+| **Middleware fundamentals** | We've used middleware implicitly (`express.static`, EJS). Understanding the `(req, res, next)` pattern deserves a dedicated lesson. | Before adding auth or logging |
 | **Splitting routes with `express.Router()`** | Only worth it when there are 10+ routes. | When the app has a second content type beyond articles |
 | **Front-matter parsing** | Article metadata (title, date, tags) in `.md` files. `marked` alone can't do this — need `gray-matter`. | When the index page needs sorting or grouping |
 | **Deployment (Vercel serverless functions)** | Different from a long-running Express server; needs its own lesson. | When the app is feature-complete enough to actually deploy |
@@ -133,7 +121,9 @@ These are important but not right now. Listed so they're not forgotten.
 | **Session/cookies** | Comes with auth. | Same as auth |
 | **Databases (SQL or NoSQL)** | Files on disk are enough for now. Would matter for user-generated content. | If the app ever accepts user input |
 | **Environment variables (`dotenv`)** | Matters for API keys and deployment configs. | Before wiring up Notion API for Antibiotics Guide |
-| **Notion API integration** | The actual payoff for Antibiotics Guide backend. | After steps 6–10 are solid — the Express pattern is transferable |
+| **Notion API integration** | The actual payoff for Antibiotics Guide backend. | After steps 7–10 are solid — the Express pattern is transferable |
+| **CSS partials / component-level styles** | Currently one flat `style.css`. Real projects split into multiple files. | Once the stylesheet grows past ~200 lines |
+| **Dark mode support** | Would use CSS custom properties + `prefers-color-scheme`. | After the site is deployed and used |
 
 ---
 
