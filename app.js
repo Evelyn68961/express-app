@@ -13,6 +13,9 @@ const app = express();
 // Set the view engine to EJS
 app.set('view engine', 'ejs'); 
 
+// middleware function that serves static files (like CSS, images, etc.) from the "public" directory
+app.use(express.static('public'));
+
 // Define a port
 const PORT = 3000;
 
