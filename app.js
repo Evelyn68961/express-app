@@ -10,6 +10,11 @@ const { marked } = require('marked');
 // Create an instance of an Express application
 const app = express();
 
+// Helper function to capitalize the first letter of a string
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 // Set the view engine to EJS
 app.set('view engine', 'ejs'); 
 
@@ -19,8 +24,19 @@ app.use(express.static('public'));
 // Define a port
 const PORT = 3000;
 
+// index route that lists all available articles
 app.get('/', (req, res) => {
-  res.send('Hello, Express!');
+  const files = fs.readdirSync('articles');
+  const articles = files
+    .filter(name => name.endsWith('.md'))
+    .map(name => name.replace('.md', ''))
+    .map(slug => ({ slug, title: capitalize(slug) }));
+
+  res.render('index', {
+    title: 'Articles',
+    articles,
+    page: 'home'
+  });
 });
 
 app.get('/dog', (req, res) => {
@@ -50,10 +66,10 @@ app.get('/articles/:articleName', (req, res) => {
   try {
     const contents = fs.readFileSync(`articles/${articleName}.md`, 'utf8');
     const html = marked(contents);
-    const title = articleName.charAt(0).toUpperCase() + articleName.slice(1);
     res.render('article', {
-      title: articleName,
-      body: html
+      title: capitalize(articleName),
+      body: html,
+      page: 'article'
     });
   } catch (err) {
     if (err.code === 'ENOENT') {
