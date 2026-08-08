@@ -51,11 +51,6 @@ app.get('/hello', (req, res) => {
   `);
 });
 
-app.get('/test', (req, res) => {
-  const contents = fs.readFileSync(path.join(ARTICLES_DIR, 'test.md'), 'utf8');
-  res.send(marked(contents));
-});
-
 // Article page — reads any ARTICLES_DIR/<slug>.md and renders it.
 app.get('/articles/:articleName', (req, res) => {
   const { articleName } = req.params;
