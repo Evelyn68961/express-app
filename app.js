@@ -1,37 +1,27 @@
-// Load the express package
+// ─── Dependencies ───
 const express = require('express');
-
-// fs (short for "file system")
 const fs = require('fs');
-
-// path builds file paths that work on any operating system
 const path = require('path');
+const { marked } = require('marked');
 
-// folder this file lives in, so paths don't depend on where we ran the command
+// ─── Constants ───
 const ARTICLES_DIR = path.join(__dirname, 'articles');
+const VALID_SLUG = /^[a-z0-9-]+$/i;
 
-// role of marked is to convert markdown to html
-const { marked } = require('marked'); 
-
-// Create an instance of an Express application
+// ─── App setup ───
 const app = express();
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Helper function to capitalize the first letter of a string
+// ─── Helpers ───
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Set the view engine to EJS
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// ─── Routes ───
 
-// middleware function that serves static files (like CSS, images, etc.) from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Define a port
-const PORT = 3000;
-
-// index route that lists all available articles
+// Home page — lists all articles found in ARTICLES_DIR.
 app.get('/', (req, res) => {
   const files = fs.readdirSync(ARTICLES_DIR);
   const articles = files
@@ -46,11 +36,9 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/dog', (req, res) => {
-  res.send('woof');
-});
+// Learning artifacts — kept from earlier lessons, not used by the site.
+app.get('/dog', (req, res) => res.send('woof'));
 
-// html
 app.get('/hello', (req, res) => {
   res.send(`
     <h1>Hi there!</h1>
@@ -59,28 +47,24 @@ app.get('/hello', (req, res) => {
   `);
 });
 
-// article
 app.get('/test', (req, res) => {
   const contents = fs.readFileSync(path.join(ARTICLES_DIR, 'test.md'), 'utf8');
-  const html = marked(contents);    // ← convert Markdown → HTML
-  res.send(html);                  // ← send the HTML version
+  res.send(marked(contents));
 });
 
-// multiple articles (with error handling + template rendering)
+// Article page — reads any ARTICLES_DIR/<slug>.md and renders it.
 app.get('/articles/:articleName', (req, res) => {
   const { articleName } = req.params;
 
-  // reject anything that isn't a plain slug, so "../" can't escape the folder
-  if (!/^[a-z0-9-]+$/i.test(articleName)) {
+  if (!VALID_SLUG.test(articleName)) {
     return res.status(404).send('Article not found');
   }
 
   try {
     const contents = fs.readFileSync(path.join(ARTICLES_DIR, `${articleName}.md`), 'utf8');
-    const html = marked(contents);
     res.render('article', {
       title: capitalize(articleName),
-      body: html,
+      body: marked(contents),
       page: 'article'
     });
   } catch (err) {
@@ -92,5 +76,4 @@ app.get('/articles/:articleName', (req, res) => {
   }
 });
 
-// Export the app
-module.exports = app; 
+module.exports = app;
