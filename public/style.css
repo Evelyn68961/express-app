@@ -50,6 +50,7 @@ header nav a {
   color: #666;             /* soft gray — feels secondary */
   font-size: 0.95rem;
   text-decoration: none;   /* remove underline */
+  margin-right: 1rem; 
 }
 
 header nav a:hover {
