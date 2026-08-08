@@ -63,6 +63,11 @@ app.get('/test', (req, res) => {
 app.get('/articles/:articleName', (req, res) => {
   const { articleName } = req.params;
 
+  // reject anything that isn't a plain slug, so "../" can't escape the folder
+  if (!/^[a-z0-9-]+$/i.test(articleName)) {
+    return res.status(404).send('Article not found');
+  }
+
   try {
     const contents = fs.readFileSync(`articles/${articleName}.md`, 'utf8');
     const html = marked(contents);
