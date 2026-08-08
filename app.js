@@ -1,18 +1,18 @@
 // ─── Dependencies ───
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const { marked } = require('marked');
+const express = require('express');  // for creating the web server
+const fs = require('fs'); // for reading files from the filesystem
+const path = require('path'); // for working with file paths
+const { marked } = require('marked'); // for converting Markdown to HTML
 
 // ─── Constants ───
-const ARTICLES_DIR = path.join(__dirname, 'articles');
-const VALID_SLUG = /^[a-z0-9-]+$/i;
+const ARTICLES_DIR = path.join(__dirname, 'articles'); // directory where article files are stored
+const VALID_SLUG = /^[a-z0-9-]+$/i; // regex to validate article slugs (only letters, numbers, and hyphens)
 
 // ─── App setup ───
-const app = express();
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
+const app = express(); // create an Express application
+app.set('view engine', 'ejs'); // set EJS as the template engine
+app.set('views', path.join(__dirname, 'views')); // set the directory for EJS templates
+app.use(express.static(path.join(__dirname, 'public'))); // serve static files from the 'public' directory
 
 // ─── Helpers ───
 function capitalize(str) {
