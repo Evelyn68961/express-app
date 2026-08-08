@@ -75,4 +75,20 @@ app.get('/articles/:articleName', (req, res) => {
   }
 });
 
+// Raw Markdown source — serves the underlying .md file for download.
+app.get('/articles/:articleName/raw', (req, res) => {
+  const { articleName } = req.params;
+
+  if (!VALID_SLUG.test(articleName)) {
+    return res.status(404).send('Article not found');
+  }
+
+  const filePath = path.join(ARTICLES_DIR, `${articleName}.md`);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      res.status(404).send('Article not found');
+    }
+  });
+});
+
 module.exports = app;
