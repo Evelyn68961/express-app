@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
     const files = fs.readdirSync(ARTICLES_DIR);
     const articles = files
       .filter(name => name.endsWith('.md'))
-      .map(name => name.replace('.md', ''))
+      .map(name => name.slice(0, -3))   // just chop off the last 3 characters
       .map(slug => ({ slug, title: capitalize(slug) }));
 
     res.render('index', {
