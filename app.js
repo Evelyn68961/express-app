@@ -23,17 +23,21 @@ function capitalize(str) {
 
 // Home page — lists all articles found in ARTICLES_DIR.
 app.get('/', (req, res) => {
-  const files = fs.readdirSync(ARTICLES_DIR);
-  const articles = files
-    .filter(name => name.endsWith('.md'))
-    .map(name => name.replace('.md', ''))
-    .map(slug => ({ slug, title: capitalize(slug) }));
+  try {
+    const files = fs.readdirSync(ARTICLES_DIR);
+    const articles = files
+      .filter(name => name.endsWith('.md'))
+      .map(name => name.replace('.md', ''))
+      .map(slug => ({ slug, title: capitalize(slug) }));
 
-  res.render('index', {
-    title: 'Articles',
-    articles,
-    page: 'home'
-  });
+    res.render('index', {
+      title: 'Articles',
+      articles,
+      page: 'home'
+    });
+  } catch (err) {
+    res.status(500).send('Something went wrong');
+  }
 });
 
 // Learning artifacts — kept from earlier lessons, not used by the site.
