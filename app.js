@@ -2,7 +2,13 @@
 const express = require('express');
 
 // fs (short for "file system")
-const fs = require('fs'); 
+const fs = require('fs');
+
+// path builds file paths that work on any operating system
+const path = require('path');
+
+// folder this file lives in, so paths don't depend on where we ran the command
+const ARTICLES_DIR = path.join(__dirname, 'articles');
 
 // role of marked is to convert markdown to html
 const { marked } = require('marked'); 
@@ -16,17 +22,18 @@ function capitalize(str) {
 }
 
 // Set the view engine to EJS
-app.set('view engine', 'ejs'); 
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // middleware function that serves static files (like CSS, images, etc.) from the "public" directory
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Define a port
 const PORT = 3000;
 
 // index route that lists all available articles
 app.get('/', (req, res) => {
-  const files = fs.readdirSync('articles');
+  const files = fs.readdirSync(ARTICLES_DIR);
   const articles = files
     .filter(name => name.endsWith('.md'))
     .map(name => name.replace('.md', ''))
@@ -54,7 +61,7 @@ app.get('/hello', (req, res) => {
 
 // article
 app.get('/test', (req, res) => {
-  const contents = fs.readFileSync('articles/test.md', 'utf8');
+  const contents = fs.readFileSync(path.join(ARTICLES_DIR, 'test.md'), 'utf8');
   const html = marked(contents);    // ← convert Markdown → HTML
   res.send(html);                  // ← send the HTML version
 });
@@ -69,7 +76,7 @@ app.get('/articles/:articleName', (req, res) => {
   }
 
   try {
-    const contents = fs.readFileSync(`articles/${articleName}.md`, 'utf8');
+    const contents = fs.readFileSync(path.join(ARTICLES_DIR, `${articleName}.md`), 'utf8');
     const html = marked(contents);
     res.render('article', {
       title: capitalize(articleName),
